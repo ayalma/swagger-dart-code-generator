@@ -184,7 +184,7 @@ class SwaggerRequestsGenerator {
 
     //Models from response
 
-    final neededResponse = response.removeList();
+    final neededResponse = response.removeListOrStream();
     if (!kBasicTypes.contains(neededResponse)) {
       results.add(neededResponse);
     }
