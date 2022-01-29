@@ -10,6 +10,7 @@ part 'swagger_request.g2.dart';
 class SwaggerRequest {
   SwaggerRequest({
     this.summary = '',
+    this.tags = const [],
     this.description = '',
     this.operationId = '',
     this.consumes = const [],
@@ -20,6 +21,8 @@ class SwaggerRequest {
     this.requestBody,
   });
 
+  @JsonKey(name: 'tags', defaultValue: [])
+  List<String> tags;
   @JsonKey(name: 'summary', defaultValue: '')
   String summary;
 

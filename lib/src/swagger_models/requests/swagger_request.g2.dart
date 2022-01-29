@@ -15,6 +15,9 @@ SwaggerRequest _$SwaggerRequestFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           [],
+      tags:
+          (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+              [],
       responses: (json['responses'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(
                 k, SwaggerResponse.fromJson(e as Map<String, dynamic>)),
@@ -43,6 +46,7 @@ Map<String, dynamic> _$SwaggerRequestToJson(SwaggerRequest instance) =>
       'description': instance.description,
       'operationId': instance.operationId,
       'consumes': instance.consumes,
+      'tags': instance.tags,
       'produces': instance.produces,
       'responses': instance.responses,
       'security': instance.security,
