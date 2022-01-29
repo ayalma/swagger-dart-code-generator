@@ -1124,11 +1124,11 @@ List<enums.$neededName> ${neededName.camelCase}ListFromJson(
     final copyWithMethod =
         generateCopyWithContent(generatedProperties, validatedClassName);
 
-    final getHashContent =
-        generateGetHashContent(generatedProperties, validatedClassName);
+    // final getHashContent =
+    //     generateGetHashContent(generatedProperties, validatedClassName);
 
-    final equalsOverride =
-        generateEqualsOverride(generatedProperties, validatedClassName);
+    // final equalsOverride =
+    //     generateEqualsOverride(generatedProperties, validatedClassName);
 
     final generatedClass = '''
 @JsonSerializable(explicitToJson: true)
@@ -1138,9 +1138,6 @@ class $validatedClassName {
 $generatedProperties
 \tMap<String, dynamic> toJson() => _\$${validatedClassName}ToJson(this);
 
-$equalsOverride
-
-$getHashContent
 }
 $copyWithMethod
 ''';

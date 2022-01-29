@@ -81,6 +81,11 @@ class SwaggerRequestsGenerator {
     swaggerRoot.paths.forEach((String path, SwaggerPath swaggerPath) {
       swaggerPath.requests
           .forEach((String requestType, SwaggerRequest swaggerRequest) {
+        swaggerRequest.tags.forEach((element) {
+          print(
+              ' request tag (${swaggerRequest.operationId ?? ''}) : $element');
+        });
+
         if (requestType.toLowerCase() == kRequestTypeOptions) {
           return;
         }
