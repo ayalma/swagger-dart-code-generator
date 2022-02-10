@@ -138,17 +138,25 @@ class SwaggerRequestsGenerator {
                 swaggerRequest.parameters.none((p) => p.inParameter == kBody) &&
                 swaggerRequest.requestBody == null;
 
-        final method = Method((m) => m
-          ..optionalParameters.addAll(parameters)
-          ..docs.add(_getCommentsForMethod(
-            methodDescription: swaggerRequest.summary,
-            parameters: swaggerRequest.parameters,
-            options: options,
-          ))
-          ..name = methodName
-          ..annotations
-              .add(_getMethodAnnotation(requestType, path, hasOptionalBody))
-          ..returns = Reference(returns));
+        final method = Method((m) {
+          m
+            ..optionalParameters.addAll(parameters)
+            ..docs.add(_getCommentsForMethod(
+              methodDescription: swaggerRequest.summary,
+              parameters: swaggerRequest.parameters,
+              options: options,
+            ))
+            ..name = methodName
+            ..annotations
+                .add(_getMethodAnnotation(requestType, path, hasOptionalBody))
+            ..returns = Reference(returns);
+
+          if (_isMultipart(swaggerRequest: swaggerRequest)) {
+            m.annotations.add(refer(KMultiPart.pascalCase).call(
+              [],
+            ));
+          }
+        });
 
         final allModels = _getAllMethodModels(
           swaggerRoot,
@@ -436,6 +444,25 @@ class SwaggerRequestsGenerator {
     return kBasicTypesMap[name] ?? name.pascalCase + modelPostfix;
   }
 
+  bool _isMultipart({
+    required SwaggerRequest swaggerRequest,
+  }) {
+    var isMultipart = false;
+    final requestBody = swaggerRequest.requestBody;
+
+    if (requestBody != null) {
+      requestBody.content.entries.forEach((element) {
+        var schema = element.value.schema;
+        if (element.key == "multipart/form-data") {
+          if ((schema?.properties.isNotEmpty ?? false)) {
+            isMultipart = true;
+          }
+        }
+      });
+    }
+    return isMultipart;
+  }
+
   List<Parameter> _getAllParameters({
     required SwaggerRequest swaggerRequest,
     required bool ignoreHeaders,
@@ -511,38 +538,68 @@ class SwaggerRequestsGenerator {
         typeName = SwaggerModelsGenerator.getValidatedClassName(typeName);
       }
 
-      final schema = requestBody.content?.schema;
-
-      if (schema != null) {
-        if (schema.format == kBinary) {
-          typeName = kObject.pascalCase;
+      requestBody.content.entries.forEach((element) {
+        var schema = element.value.schema;
+        if (element.key == "multipart/form-data") {
+          if ((schema?.properties.isNotEmpty ?? false)) {
+            schema?.properties.entries.forEach((property) {
+              schema = property.value;
+              if (schema?.format == kBinary) {
+                typeName = 'dynamic';
+              }
+              if (typeName.isNotEmpty) {
+                result.add(
+                  Parameter(
+                    (p) => p
+                      ..name = property.key
+                      ..named = true
+                      ..required = true
+                      ..type = Reference(
+                        typeName.makeNullableIfRequired(true),
+                      )
+                      ..named = true
+                      ..annotations.add(
+                        refer(KPart.pascalCase)
+                            .call([], {'name': literalString(property.key)}),
+                      ),
+                  ),
+                );
+              }
+            });
+          }
         } else {
-          typeName = _getRequestBodyTypeName(
-            schema: schema,
-            modelPostfix: options.modelPostfix,
-            root: root,
-            requestPath: path + requestType.pascalCase,
-          );
-        }
-      }
+          if (schema != null) {
+            if (schema.format == kBinary) {
+              typeName = kObject.pascalCase;
+            } else {
+              typeName = _getRequestBodyTypeName(
+                schema: schema,
+                modelPostfix: options.modelPostfix,
+                root: root,
+                requestPath: path + requestType.pascalCase,
+              );
+            }
+          }
 
-      if (typeName.isNotEmpty) {
-        result.add(
-          Parameter(
-            (p) => p
-              ..name = kBody
-              ..named = true
-              ..required = true
-              ..type = Reference(
-                typeName.makeNullable(),
-              )
-              ..named = true
-              ..annotations.add(
-                refer(kBody.pascalCase).call([]),
+          if (typeName.isNotEmpty) {
+            result.add(
+              Parameter(
+                (p) => p
+                  ..name = kBody
+                  ..named = true
+                  ..required = true
+                  ..type = Reference(
+                    typeName.makeNullable(),
+                  )
+                  ..named = true
+                  ..annotations.add(
+                    refer(kBody.pascalCase).call([]),
+                  ),
               ),
-          ),
-        );
-      }
+            );
+          }
+        }
+      });
     }
 
     return result.distinctParameters();

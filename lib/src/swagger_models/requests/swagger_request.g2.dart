@@ -9,15 +9,15 @@ part of 'swagger_request.dart';
 SwaggerRequest _$SwaggerRequestFromJson(Map<String, dynamic> json) =>
     SwaggerRequest(
       summary: json['summary'] as String? ?? '',
+      tags:
+          (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+              [],
       description: json['description'] as String? ?? '',
       operationId: json['operationId'] as String? ?? '',
       consumes: (json['consumes'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
-      tags:
-          (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-              [],
       responses: (json['responses'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(
                 k, SwaggerResponse.fromJson(e as Map<String, dynamic>)),
@@ -42,11 +42,11 @@ SwaggerRequest _$SwaggerRequestFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$SwaggerRequestToJson(SwaggerRequest instance) =>
     <String, dynamic>{
+      'tags': instance.tags,
       'summary': instance.summary,
       'description': instance.description,
       'operationId': instance.operationId,
       'consumes': instance.consumes,
-      'tags': instance.tags,
       'produces': instance.produces,
       'responses': instance.responses,
       'security': instance.security,
@@ -55,7 +55,10 @@ Map<String, dynamic> _$SwaggerRequestToJson(SwaggerRequest instance) =>
     };
 
 RequestBody _$RequestBodyFromJson(Map<String, dynamic> json) => RequestBody(
-      content: _contentFromJson(json['content'] as Map<String, dynamic>?),
+      content: (json['content'] as Map<String, dynamic>).map(
+        (k, e) =>
+            MapEntry(k, RequestContent.fromJson(e as Map<String, dynamic>)),
+      ),
       ref: json[r'$ref'] as String? ?? '',
     );
 

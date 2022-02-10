@@ -2,7 +2,7 @@ targets:
   swagger_dart_code_generator:swagger_dart_code_generator:
     builders:
       swagger_dart_code_generator:
-        enabled: True
+        enabled: False
 builders:
   swagger_dart_code_generator:
     import: "package:swagger_dart_code_generator/swagger_dart_code_generator.dart"

@@ -70,6 +70,8 @@ const kCookie = 'cookie';
 const kArray = 'array';
 const kEnum = 'enum';
 const kBody = 'body';
+const KPart = 'part';
+const KMultiPart = "multiPart";
 
 const kDynamic = 'dynamic';
 

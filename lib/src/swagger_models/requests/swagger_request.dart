@@ -58,14 +58,14 @@ class SwaggerRequest {
 
 @JsonSerializable()
 class RequestBody {
-  @JsonKey(name: 'content', fromJson: _contentFromJson)
-  RequestContent? content;
+  @JsonKey(name: 'content')
+  Map<String, RequestContent> content;
 
   @JsonKey(name: '\$ref', defaultValue: '')
   String ref;
 
   RequestBody({
-    this.content,
+    required this.content,
     this.ref = '',
   });
 
