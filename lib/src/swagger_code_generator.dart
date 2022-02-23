@@ -50,12 +50,12 @@ class SwaggerCodeGenerator {
           hasEnums,
           separateModels);
 
-  String generateResponses(
+  Map<String, dynamic> generateResponses(
           String dartCode, String fileName, GeneratorOptions options) =>
       _getSwaggerModelsGenerator(dartCode)
           .generateResponses(dartCode, fileName, options);
 
-  String generateRequestBodies(
+  Map<String, dynamic> generateRequestBodies(
           String dartCode, String fileName, GeneratorOptions options) =>
       _getSwaggerModelsGenerator(dartCode)
           .generateRequestBodies(dartCode, fileName, options);
@@ -63,7 +63,7 @@ class SwaggerCodeGenerator {
   String generateEnums(String dartCode, String fileName) =>
       _getSwaggerEnumsGenerator(dartCode).generate(dartCode, fileName);
 
-  String generateModels(
+  Map<String, dynamic> generateModels(
           String dartCode, String fileName, GeneratorOptions options) =>
       _getSwaggerModelsGenerator(dartCode)
           .generate(dartCode, fileName, options);

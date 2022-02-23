@@ -9,7 +9,7 @@ import 'package:collection/collection.dart';
 
 class SwaggerModelsGeneratorV3 extends SwaggerModelsGenerator {
   @override
-  String generate(String dartCode, String fileName, GeneratorOptions options) {
+  Map<String, dynamic> generate(String dartCode, String fileName, GeneratorOptions options) {
     final dynamic map = jsonDecode(dartCode);
 
     final components = map['components'] as Map<String, dynamic>?;
@@ -21,7 +21,7 @@ class SwaggerModelsGeneratorV3 extends SwaggerModelsGenerator {
   }
 
   @override
-  String generateResponses(
+  Map<String, dynamic> generateResponses(
       String dartCode, String fileName, GeneratorOptions options) {
     final dynamic map = jsonDecode(dartCode);
 
@@ -31,7 +31,7 @@ class SwaggerModelsGeneratorV3 extends SwaggerModelsGenerator {
         : components['responses'] as Map<String, dynamic>?;
 
     if (responses == null) {
-      return '';
+      return {};
     }
 
     var result = <String, dynamic>{};
@@ -114,7 +114,7 @@ class SwaggerModelsGeneratorV3 extends SwaggerModelsGenerator {
   }
 
   @override
-  String generateRequestBodies(
+  Map<String, dynamic> generateRequestBodies(
       String dartCode, String fileName, GeneratorOptions options) {
     final dynamic map = jsonDecode(dartCode);
 
@@ -127,7 +127,7 @@ class SwaggerModelsGeneratorV3 extends SwaggerModelsGenerator {
     requestBodies.addAll(_getRequestBodiesFromRequests(dartCode));
 
     if (requestBodies.isEmpty) {
-      return '';
+      return {};
     }
 
     var result = <String, dynamic>{};

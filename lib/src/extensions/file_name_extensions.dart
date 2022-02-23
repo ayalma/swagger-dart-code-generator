@@ -14,3 +14,11 @@ String getFileNameWithoutExtension(String file) {
 String getFileNameBase(String filePath) {
   return p.basenameWithoutExtension(filePath).replaceAll('-', '_');
 }
+
+String getCamelCaseName(String name) {
+  // Single character look-ahead for capital letter.
+  final beforeCapitalLetter = RegExp(r"(?=[A-Z])");
+
+  var parts = name.split(beforeCapitalLetter);
+  return parts.map((e) => e.toLowerCase()).join('_');
+}
