@@ -6,22 +6,23 @@ import 'package:swagger_dart_code_generator/src/models/generator_options.dart';
 
 class SwaggerModelsGeneratorV2 extends SwaggerModelsGenerator {
   @override
-  String generate(String dartCode, String fileName, GeneratorOptions options) {
+  Map<String, dynamic> generate(
+      String dartCode, String fileName, GeneratorOptions options) {
     final dynamic map = jsonDecode(dartCode);
     final definitions = map['definitions'] as Map<String, dynamic>?;
     return generateBase(dartCode, fileName, options, definitions ?? {}, true);
   }
 
   @override
-  String generateResponses(
+  Map<String, dynamic> generateResponses(
       String dartCode, String fileName, GeneratorOptions options) {
-    return '';
+    return {};
   }
 
   @override
-  String generateRequestBodies(
+  Map<String, dynamic> generateRequestBodies(
       String dartCode, String fileName, GeneratorOptions options) {
-    return '';
+    return {};
   }
 
   @override

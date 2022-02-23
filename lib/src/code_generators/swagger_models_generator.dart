@@ -15,11 +15,11 @@ import 'constants.dart';
 abstract class SwaggerModelsGenerator {
   static const List<String> keyClasses = ['Response', 'Request'];
 
-  String generate(String dartCode, String fileName, GeneratorOptions options);
-  String generateResponses(
+  Map<String, dynamic> generate(String dartCode, String fileName, GeneratorOptions options);
+  Map<String, dynamic> generateResponses(
       String dartCode, String fileName, GeneratorOptions options);
 
-  String generateRequestBodies(
+  Map<String, dynamic> generateRequestBodies(
       String dartCode, String fileName, GeneratorOptions options);
   String getExtendsString(Map<String, dynamic> map);
   List<String> getAllListEnumNames(String swaggerFile);
@@ -173,7 +173,7 @@ abstract class SwaggerModelsGenerator {
     return responses;
   }
 
-  String generateBase(
+  Map<String, dynamic> generateBase(
       String dartCode,
       String fileName,
       GeneratorOptions options,
@@ -195,28 +195,27 @@ abstract class SwaggerModelsGenerator {
 
     classes.addAll(classesFromInnerClasses);
 
-    if (classes.isEmpty) {
-      return '';
-    }
-
-    final generatedClasses = classes.keys.map((String className) {
+    final generatedClasses = classes.map((String key, dynamic value) {
       if (classes['enum'] != null) {
-        return '';
+        return MapEntry(key, value);
       }
 
-      return generateModelClassContent(
-        dartCode,
-        className.pascalCase,
-        classes[className] as Map<String, dynamic>,
-        classes,
-        options.defaultValuesMap,
-        options.useDefaultNullForLists,
-        allEnumsNames,
-        allEnumListNames,
-        options,
-      );
-    }).join('\n');
+      return MapEntry(
+          key,
+          generateModelClassContent(
+            dartCode,
+            key.pascalCase,
+            value as Map<String, dynamic>,
+            classes,
+            options.defaultValuesMap,
+            options.useDefaultNullForLists,
+            allEnumsNames,
+            allEnumListNames,
+            options,
+          ));
+    }); // todo: save each class in seprate file
 
+    return generatedClasses;
     var results = '$generatedClasses\n$generatedEnumFromJsonToJson';
 
     final listEnums = getAllListEnumNames(dartCode);
@@ -225,7 +224,7 @@ abstract class SwaggerModelsGenerator {
       results = results.replaceAll(' $listEnum ', ' List<$listEnum> ');
     });
 
-    return results;
+    // return results;
   }
 
   static String getValidatedClassName(String className) {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:code_builder/code_builder.dart';
 import 'package:swagger_dart_code_generator/src/code_generators/swagger_additions_generator.dart';
 import 'package:swagger_dart_code_generator/src/code_generators/swagger_enums_generator.dart';
 import 'package:swagger_dart_code_generator/src/code_generators/swagger_models_generator.dart';
@@ -49,12 +50,12 @@ class SwaggerCodeGenerator {
           hasEnums,
           separateModels);
 
-  String generateResponses(
+  Map<String, dynamic> generateResponses(
           String dartCode, String fileName, GeneratorOptions options) =>
       _getSwaggerModelsGenerator(dartCode)
           .generateResponses(dartCode, fileName, options);
 
-  String generateRequestBodies(
+  Map<String, dynamic> generateRequestBodies(
           String dartCode, String fileName, GeneratorOptions options) =>
       _getSwaggerModelsGenerator(dartCode)
           .generateRequestBodies(dartCode, fileName, options);
@@ -62,12 +63,12 @@ class SwaggerCodeGenerator {
   String generateEnums(String dartCode, String fileName) =>
       _getSwaggerEnumsGenerator(dartCode).generate(dartCode, fileName);
 
-  String generateModels(
+  Map<String, dynamic> generateModels(
           String dartCode, String fileName, GeneratorOptions options) =>
       _getSwaggerModelsGenerator(dartCode)
           .generate(dartCode, fileName, options);
 
-  String generateRequests(String dartCode, String className, String fileName,
+  Map<String,Class> generateRequests(String dartCode, String className, String fileName,
           GeneratorOptions options) =>
       _getSwaggerRequestsGenerator(dartCode).generate(
         code: dartCode,
