@@ -1,3 +1,4 @@
+import 'package:recase/recase.dart';
 import 'package:swagger_dart_code_generator/src/extensions/string_extension.dart';
 import 'package:path/path.dart' as p;
 
@@ -17,8 +18,6 @@ String getFileNameBase(String filePath) {
 
 String getCamelCaseName(String name) {
   // Single character look-ahead for capital letter.
-  final beforeCapitalLetter = RegExp(r"(?=[A-Z])");
-
-  var parts = name.split(beforeCapitalLetter);
-  return parts.map((e) => e.toLowerCase()).join('_');
+  final temp = ReCase(name);
+  return temp.snakeCase;
 }
