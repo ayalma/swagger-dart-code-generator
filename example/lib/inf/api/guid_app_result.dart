@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'guid_app_result_model.g.dart';
+part 'guid_app_result.g.dart';
 @JsonSerializable(explicitToJson: true)
 class GuidAppResult {
   GuidAppResult({

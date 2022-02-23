@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'boolean_app_result_model.g.dart';
+part 'boolean_app_result.g.dart';
 @JsonSerializable(explicitToJson: true)
 class BooleanAppResult {
   BooleanAppResult({

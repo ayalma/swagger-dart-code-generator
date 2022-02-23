@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'create_store_dto_model.g.dart';
+part 'create_store_dto.g.dart';
 @JsonSerializable(explicitToJson: true)
 class CreateStoreDto {
   CreateStoreDto();

@@ -1,14 +1,15 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'update_item_dto_model.g.dart';
+part 'item_read_dto.g.dart';
 @JsonSerializable(explicitToJson: true)
-class UpdateItemDto {
-  UpdateItemDto({
+class ItemReadDto {
+  ItemReadDto({
     this.uId,
     this.name,
     this.fullName,
     this.type,
     this.unitType,
-    this.categoryUId,
+    this.category,
+    this.status,
     this.barcode,
     this.brand,
     this.rowVersion,
@@ -17,8 +18,8 @@ class UpdateItemDto {
     this.itemPrice,
   });
 
-  factory UpdateItemDto.fromJson(Map<String, dynamic> json) =>
-      _$UpdateItemDtoFromJson(json);
+  factory ItemReadDto.fromJson(Map<String, dynamic> json) =>
+      _$ItemReadDtoFromJson(json);
 
   @JsonKey(name: 'uId', includeIfNull: false, defaultValue: '')
   final String? uId;
@@ -38,8 +39,14 @@ class UpdateItemDto {
       toJson: itemUnitsToJson,
       fromJson: itemUnitsFromJson)
   final enums.ItemUnits? unitType;
-  @JsonKey(name: 'categoryUId', includeIfNull: false, defaultValue: '')
-  final String? categoryUId;
+  @JsonKey(name: 'category', includeIfNull: false)
+  final ItemCategoryDto? category;
+  @JsonKey(
+      name: 'status',
+      includeIfNull: false,
+      toJson: itemStatusesToJson,
+      fromJson: itemStatusesFromJson)
+  final enums.ItemStatuses? status;
   @JsonKey(name: 'barcode', includeIfNull: false, defaultValue: '')
   final String? barcode;
   @JsonKey(name: 'brand', includeIfNull: false, defaultValue: '')
@@ -52,30 +59,32 @@ class UpdateItemDto {
   final ItemConfigUpdateDto? config;
   @JsonKey(name: 'itemPrice', includeIfNull: false)
   final ItemPriceUpdateDto? itemPrice;
-  Map<String, dynamic> toJson() => _$UpdateItemDtoToJson(this);
+  Map<String, dynamic> toJson() => _$ItemReadDtoToJson(this);
 }
 
-extension $UpdateItemDtoExtension on UpdateItemDto {
-  UpdateItemDto copyWith(
+extension $ItemReadDtoExtension on ItemReadDto {
+  ItemReadDto copyWith(
       {String? uId,
       String? name,
       String? fullName,
       enums.ItemTypes? type,
       enums.ItemUnits? unitType,
-      String? categoryUId,
+      ItemCategoryDto? category,
+      enums.ItemStatuses? status,
       String? barcode,
       String? brand,
       String? rowVersion,
       int? stock,
       ItemConfigUpdateDto? config,
       ItemPriceUpdateDto? itemPrice}) {
-    return UpdateItemDto(
+    return ItemReadDto(
         uId: uId ?? this.uId,
         name: name ?? this.name,
         fullName: fullName ?? this.fullName,
         type: type ?? this.type,
         unitType: unitType ?? this.unitType,
-        categoryUId: categoryUId ?? this.categoryUId,
+        category: category ?? this.category,
+        status: status ?? this.status,
         barcode: barcode ?? this.barcode,
         brand: brand ?? this.brand,
         rowVersion: rowVersion ?? this.rowVersion,

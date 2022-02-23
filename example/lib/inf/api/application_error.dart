@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'application_error_model.g.dart';
+part 'application_error.g.dart';
 @JsonSerializable(explicitToJson: true)
 class ApplicationError {
   ApplicationError({

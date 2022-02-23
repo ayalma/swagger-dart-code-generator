@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'item_read_dto_i_enumerable_app_result_model.g.dart';
+part 'item_read_dto_i_enumerable_app_result.g.dart';
 @JsonSerializable(explicitToJson: true)
 class ItemReadDtoIEnumerableAppResult {
   ItemReadDtoIEnumerableAppResult({

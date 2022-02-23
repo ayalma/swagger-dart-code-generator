@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'item_category_dto_model.g.dart';
+part 'item_category_dto.g.dart';
 @JsonSerializable(explicitToJson: true)
 class ItemCategoryDto {
   ItemCategoryDto({

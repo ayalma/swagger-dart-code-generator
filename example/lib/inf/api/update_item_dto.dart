@@ -1,8 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'create_item_dto_model.g.dart';
+part 'update_item_dto.g.dart';
 @JsonSerializable(explicitToJson: true)
-class CreateItemDto {
-  CreateItemDto({
+class UpdateItemDto {
+  UpdateItemDto({
+    this.uId,
     this.name,
     this.fullName,
     this.type,
@@ -10,14 +11,17 @@ class CreateItemDto {
     this.categoryUId,
     this.barcode,
     this.brand,
+    this.rowVersion,
     this.stock,
     this.config,
     this.itemPrice,
   });
 
-  factory CreateItemDto.fromJson(Map<String, dynamic> json) =>
-      _$CreateItemDtoFromJson(json);
+  factory UpdateItemDto.fromJson(Map<String, dynamic> json) =>
+      _$UpdateItemDtoFromJson(json);
 
+  @JsonKey(name: 'uId', includeIfNull: false, defaultValue: '')
+  final String? uId;
   @JsonKey(name: 'name', includeIfNull: false, defaultValue: '')
   final String? name;
   @JsonKey(name: 'fullName', includeIfNull: false, defaultValue: '')
@@ -40,28 +44,33 @@ class CreateItemDto {
   final String? barcode;
   @JsonKey(name: 'brand', includeIfNull: false, defaultValue: '')
   final String? brand;
+  @JsonKey(name: 'rowVersion', includeIfNull: false, defaultValue: '')
+  final String? rowVersion;
   @JsonKey(name: 'stock', includeIfNull: false)
   final int? stock;
   @JsonKey(name: 'config', includeIfNull: false)
-  final ItemConfigCreateDto? config;
+  final ItemConfigUpdateDto? config;
   @JsonKey(name: 'itemPrice', includeIfNull: false)
-  final ItemPriceCreateDto? itemPrice;
-  Map<String, dynamic> toJson() => _$CreateItemDtoToJson(this);
+  final ItemPriceUpdateDto? itemPrice;
+  Map<String, dynamic> toJson() => _$UpdateItemDtoToJson(this);
 }
 
-extension $CreateItemDtoExtension on CreateItemDto {
-  CreateItemDto copyWith(
-      {String? name,
+extension $UpdateItemDtoExtension on UpdateItemDto {
+  UpdateItemDto copyWith(
+      {String? uId,
+      String? name,
       String? fullName,
       enums.ItemTypes? type,
       enums.ItemUnits? unitType,
       String? categoryUId,
       String? barcode,
       String? brand,
+      String? rowVersion,
       int? stock,
-      ItemConfigCreateDto? config,
-      ItemPriceCreateDto? itemPrice}) {
-    return CreateItemDto(
+      ItemConfigUpdateDto? config,
+      ItemPriceUpdateDto? itemPrice}) {
+    return UpdateItemDto(
+        uId: uId ?? this.uId,
         name: name ?? this.name,
         fullName: fullName ?? this.fullName,
         type: type ?? this.type,
@@ -69,6 +78,7 @@ extension $CreateItemDtoExtension on CreateItemDto {
         categoryUId: categoryUId ?? this.categoryUId,
         barcode: barcode ?? this.barcode,
         brand: brand ?? this.brand,
+        rowVersion: rowVersion ?? this.rowVersion,
         stock: stock ?? this.stock,
         config: config ?? this.config,
         itemPrice: itemPrice ?? this.itemPrice);

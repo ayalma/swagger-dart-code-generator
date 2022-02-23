@@ -541,8 +541,9 @@ class SwaggerRequestsGenerator {
 
         typeName = SwaggerModelsGenerator.getValidatedClassName(typeName);
       }
-
-      requestBody.content.entries.forEach((element) {
+      var element = requestBody.content.entries.firstOrNull;
+      if (element != null) {
+        // requestBody.content.entries.forEach((element) {
         var schema = element.value.schema;
         if (element.key == "multipart/form-data") {
           if ((schema?.properties.isNotEmpty ?? false)) {
@@ -603,7 +604,8 @@ class SwaggerRequestsGenerator {
             );
           }
         }
-      });
+      }
+      // });
     }
 
     return result.distinctParameters();

@@ -82,7 +82,7 @@ List<String> _getPossibleModelFilesName(
       content, getFileNameWithoutExtension('fileNameWithExtension'), options);
 
   return models.keys
-      .map((e) => join(out, "${getCamelCaseName(e)}_model.dart"))
+      .map((e) => join(out, "${getCamelCaseName(e)}.dart"))
       .toList();
 }
 
@@ -156,7 +156,7 @@ ${value.accept(DartEmitter()).toString()}
     ///
     models.forEach((key, value) async {
       //return service.accept(DartEmitter()).toString();
-      final filename = getCamelCaseName(key + "_model");
+      final filename = getCamelCaseName(key);
       final requestsAssetId = AssetId(buildStep.inputId.package,
           join(options.outputFolder, '$filename.dart'));
       final requestCalass = """
