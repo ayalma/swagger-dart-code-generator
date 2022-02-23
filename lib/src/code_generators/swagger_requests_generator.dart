@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:code_builder/code_builder.dart';
+import 'package:swagger_dart_code_generator/src/extensions/file_name_extensions.dart';
 import 'package:swagger_dart_code_generator/src/models/generator_options.dart';
 import 'package:swagger_dart_code_generator/src/code_generators/swagger_models_generator.dart';
 import 'package:swagger_dart_code_generator/src/extensions/string_extension.dart';
@@ -17,7 +18,7 @@ import 'package:swagger_dart_code_generator/src/extensions/parameter_extensions.
 import 'constants.dart';
 
 class SwaggerRequestsGenerator {
-  String generate({
+  Map<String, Class> generate({
     required String code,
     required String className,
     required String fileName,
@@ -26,19 +27,19 @@ class SwaggerRequestsGenerator {
     final map = jsonDecode(code) as Map<String, dynamic>;
     final swaggerRoot = SwaggerRoot.fromJson(map);
 
-    final service = _generateService(
+    final classes = _generateService(
       swaggerRoot,
       className,
       fileName,
       options,
     );
 
-    return service.accept(DartEmitter()).toString();
+    return classes;
   }
 
-  Class _generateService(
+  Map<String, Class> _generateService(
     SwaggerRoot swaggerRoot,
-    String className,
+    String _className,
     String fileName,
     GeneratorOptions options,
   ) {
@@ -46,46 +47,44 @@ class SwaggerRequestsGenerator {
       swaggerRoot: swaggerRoot,
       options: options,
     );
-    var baseUrlParameter = ParameterBuilder()
-      ..name = 'dio'
-      ..type = refer('Dio');
 
-    var dioParameter = ParameterBuilder()
-      ..name = 'baseUrl'
-      ..required = false
-      ..named = true
-      ..type = refer('String');
+    return allMethodsContent.map<String, Class>((key, value) {
+      var baseUrlParameter = ParameterBuilder()
+        ..name = 'dio'
+        ..type = refer('Dio');
 
-    var classCtor = ConstructorBuilder()
-      ..optionalParameters.add(dioParameter.build())
-      ..requiredParameters.add(baseUrlParameter.build())
-      ..redirect = Reference('_$className')
-      ..body = Code(' _$className')
-      ..factory = true;
-
-    return Class((c) {
-      c
-        ..abstract = true
-        ..annotations.add(refer(kRetrofitApi).call([]))
-        ..name = className
-        ..constructors.add(classCtor.build())
-        ..methods.addAll(allMethodsContent);
+      var dioParameter = ParameterBuilder()
+        ..name = 'baseUrl'
+        ..required = false
+        ..named = true
+        ..type = refer('String');
+      final className = getClassNameFromFileName("${key}_api");
+      var classCtor = ConstructorBuilder()
+        ..optionalParameters.add(dioParameter.build())
+        ..requiredParameters.add(baseUrlParameter.build())
+        ..redirect = Reference('_$className')
+        ..body = Code(' _$className')
+        ..factory = true;
+      return MapEntry(key, Class((c) {
+        c
+          ..abstract = true
+          ..annotations.add(refer(kRetrofitApi).call([]))
+          ..name = className
+          ..constructors.add(classCtor.build())
+          ..methods.addAll(value);
+      }));
     });
   }
 
-  List<Method> _getAllMethodsContent({
+  Map<String, List<Method>> _getAllMethodsContent({
     required SwaggerRoot swaggerRoot,
     required GeneratorOptions options,
   }) {
-    final methods = <Method>[];
+    Map<String, List<Method>> methodsMaps = {};
+    int i = 0;
     swaggerRoot.paths.forEach((String path, SwaggerPath swaggerPath) {
       swaggerPath.requests
           .forEach((String requestType, SwaggerRequest swaggerRequest) {
-        swaggerRequest.tags.forEach((element) {
-          print(
-              ' request tag (${swaggerRequest.operationId ?? ''}) : $element');
-        });
-
         if (requestType.toLowerCase() == kRequestTypeOptions) {
           return;
         }
@@ -166,11 +165,16 @@ class SwaggerRequestsGenerator {
 
         final privateMethod = _getPrivateMethod(method);
         final publicMethod = _getPublicMethod(method, allModels);
-        methods.add(method);
+
+        var methodGroups = methodsMaps[swaggerRequest.tags.first];
+        if (methodGroups == null) {
+          methodsMaps[swaggerRequest.tags.first] = List.empty(growable: true);
+          methodGroups = methodsMaps[swaggerRequest.tags.first];
+        }
+        methodGroups?.add(method);
       });
     });
-
-    return methods;
+    return methodsMaps;
   }
 
   List<String> _getAllMethodModels(

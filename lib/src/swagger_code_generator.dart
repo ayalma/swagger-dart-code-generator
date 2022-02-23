@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:code_builder/code_builder.dart';
 import 'package:swagger_dart_code_generator/src/code_generators/swagger_additions_generator.dart';
 import 'package:swagger_dart_code_generator/src/code_generators/swagger_enums_generator.dart';
 import 'package:swagger_dart_code_generator/src/code_generators/swagger_models_generator.dart';
@@ -67,7 +68,7 @@ class SwaggerCodeGenerator {
       _getSwaggerModelsGenerator(dartCode)
           .generate(dartCode, fileName, options);
 
-  String generateRequests(String dartCode, String className, String fileName,
+  Map<String,Class> generateRequests(String dartCode, String className, String fileName,
           GeneratorOptions options) =>
       _getSwaggerRequestsGenerator(dartCode).generate(
         code: dartCode,
