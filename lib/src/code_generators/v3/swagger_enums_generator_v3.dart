@@ -4,7 +4,7 @@ import 'package:swagger_dart_code_generator/src/code_generators/swagger_models_g
 
 class SwaggerEnumsGeneratorV3 extends SwaggerEnumsGenerator {
   @override
-  String generate(String dartCode, String fileName) {
+  Map<String, String> generate(String dartCode, String fileName) {
     final map = jsonDecode(dartCode) as Map<String, dynamic>;
 
     final components = map['components'] as Map<String, dynamic>?;

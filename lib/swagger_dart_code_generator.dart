@@ -68,7 +68,7 @@ List<String> _getPossibleFilesName(
       getFileNameWithoutExtension('fileNameWithExtension'),
       options);
   return requests.keys
-      .map((e) => join(out, "${e.toLowerCase()}_api.dart"))
+      .map((e) => join(out, "api\\${e.toLowerCase()}_api.dart"))
       .toList();
 }
 
@@ -78,12 +78,17 @@ List<String> _getPossibleModelFilesName(
   final codeGenerator = SwaggerCodeGenerator();
   var out = normalize(options.outputFolder);
   final name = getFileNameBase(element.path);
+  final enums = codeGenerator.generateEnums(content, 'filename');
   final models = codeGenerator.generateModels(
       content, getFileNameWithoutExtension('fileNameWithExtension'), options);
-
-  return models.keys
-      .map((e) => join(out, "${getCamelCaseName(e)}.dart"))
+  final enumNames = enums.keys
+      .map((e) => join(out, "models\\${getCamelCaseName(e)}_enum.dart"))
       .toList();
+
+  final modelsName = models.keys
+      .map((e) => join(out, "models\\${getCamelCaseName(e)}.dart"))
+      .toList();
+  return modelsName..addAll(enumNames);
 }
 
 ///Root library entry
@@ -142,7 +147,7 @@ class SwaggerDartCodeGenerator implements Builder {
       //return service.accept(DartEmitter()).toString();
       final filename = getFileNameBase(key.toLowerCase() + "_api");
       final requestsAssetId = AssetId(buildStep.inputId.package,
-          join(options.outputFolder, '$filename.dart'));
+          join(options.outputFolder, 'api\\$filename.dart'));
       final requestCalass = """
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
@@ -155,16 +160,18 @@ ${value.accept(DartEmitter()).toString()}
     /// Model
     ///
     models.forEach((key, value) async {
-      //return service.accept(DartEmitter()).toString();
-      final filename = getCamelCaseName(key);
-      final requestsAssetId = AssetId(buildStep.inputId.package,
-          join(options.outputFolder, '$filename.dart'));
-      final requestCalass = """
+      if (value.toString().isNotEmpty) {
+        //return service.accept(DartEmitter()).toString();
+        final filename = getCamelCaseName(key);
+        final requestsAssetId = AssetId(buildStep.inputId.package,
+            join(options.outputFolder, 'models\\$filename.dart'));
+        final requestCalass = """
 import 'package:json_annotation/json_annotation.dart';
 part '${filename}.g.dart';
 ${_tryFormatCode(value.toString())}
 """;
-      await buildStep.writeAsString(requestsAssetId, requestCalass);
+        await buildStep.writeAsString(requestsAssetId, requestCalass);
+      }
     });
 
     final dateToJson = codeGenerator.generateDateToJson(contents);
@@ -185,17 +192,16 @@ ${_tryFormatCode(value.toString())}
       //           dateToJson));
     }
 
-    if (enums.isNotEmpty) {
-      ///Write enums
-      final formatterEnums = _tryFormatCode(enums);
-
-      final enumsAssetId = AssetId(
-          buildStep.inputId.package,
-          join(options.outputFolder,
-              '$fileNameWithoutExtension$_outputEnumsFileExtension'));
-
-      await buildStep.writeAsString(enumsAssetId, formatterEnums);
-    }
+    enums.forEach((key, value) async {
+      final filename = getCamelCaseName(key);
+      final enumsAssetId = AssetId(buildStep.inputId.package,
+          join(options.outputFolder, 'models\\${filename}_enum.dart'));
+      final enumClass = """
+import 'package:json_annotation/json_annotation.dart';
+${_tryFormatCode(value.toString())}
+""";
+      await buildStep.writeAsString(enumsAssetId, enumClass);
+    });
 
     //   if (options.separateModels) {
     //     ///Write models to separate file
