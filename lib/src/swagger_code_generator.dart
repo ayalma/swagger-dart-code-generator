@@ -60,16 +60,15 @@ class SwaggerCodeGenerator {
       _getSwaggerModelsGenerator(dartCode)
           .generateRequestBodies(dartCode, fileName, options);
 
-  String generateEnums(String dartCode, String fileName) =>
+  Map<String, String> generateEnums(String dartCode, String fileName) =>
       _getSwaggerEnumsGenerator(dartCode).generate(dartCode, fileName);
-
   Map<String, dynamic> generateModels(
           String dartCode, String fileName, GeneratorOptions options) =>
       _getSwaggerModelsGenerator(dartCode)
           .generate(dartCode, fileName, options);
 
-  Map<String,Class> generateRequests(String dartCode, String className, String fileName,
-          GeneratorOptions options) =>
+  Map<String, Class> generateRequests(String dartCode, String className,
+          String fileName, GeneratorOptions options) =>
       _getSwaggerRequestsGenerator(dartCode).generate(
         code: dartCode,
         className: className,

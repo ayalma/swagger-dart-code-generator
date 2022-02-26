@@ -3,7 +3,7 @@ import 'package:swagger_dart_code_generator/src/code_generators/swagger_enums_ge
 
 class SwaggerEnumsGeneratorV2 extends SwaggerEnumsGenerator {
   @override
-  String generate(String dartCode, String fileName) {
+  Map<String, String> generate(String dartCode, String fileName) {
     final dynamic map = jsonDecode(dartCode);
 
     final definitions = map['definitions'] as Map<String, dynamic>? ?? {};
